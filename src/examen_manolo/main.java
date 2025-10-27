@@ -25,3 +25,4 @@ public class main {
         System.out.println(alquiler1);
         System.out.println(alquiler2);
     }
+}
