@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * 
- */
-module examen_manolo {
-}
