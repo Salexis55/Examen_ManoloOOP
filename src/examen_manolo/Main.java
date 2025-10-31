@@ -3,37 +3,34 @@ import java.time.LocalDate;
 import java.util.*;
 
 /**
- * Main.java
- * Sistema simple de Venta de Coches (consola).
- * Archivo autocontenido: contiene todas las clases necesarias para ejecutar una demo.
- *
- * Cómo compilar:
- *   javac Main.java
- * Cómo ejecutar:
- *   java Main
- *
- * Atención: es una demo educativa — el pago está simulado (no conecta con pasarelas).
+ * Sistema simple de venta de coches en consola.
+ * Contiene todas las clases necesarias en un solo archivo (demo educativa).
  */
 public class Main {
 
+    // Scanner para leer entradas del usuario
     private static final Scanner sc = new Scanner(System.in);
+    // Lista de coches disponibles en la flota
     private static final List<Coche> flota = new ArrayList<>();
+    // Lista de ventas realizadas
     private static final List<Venta> ventas = new ArrayList<>();
 
+    // Método principal: inicia el programa
     public static void main(String[] args) {
-        seedData();
+        seedData(); // Carga coches de ejemplo
         System.out.println("=== SISTEMA DE VENTA DE COCHES - DEMO ===");
-        boolean running = true;
+
+        boolean running = true; // Control del bucle principal
         while (running) {
-            printMenu();
+            printMenu(); // Muestra opciones
             int opcion = readInt("Elige una opción: ");
             switch (opcion) {
-                case 1 -> listarCoches();
-                case 2 -> verDetalleCoche();
-                case 3 -> realizarCompra();
-                case 4 -> listarVentas();
-                case 5 -> anadirCoche();
-                case 0 -> {
+                case 1 -> listarCoches();      // Ver coches disponibles
+                case 2 -> verDetalleCoche();   // Ver información de un coche
+                case 3 -> realizarCompra();    // Comprar coche
+                case 4 -> listarVentas();      // Mostrar ventas
+                case 5 -> anadirCoche();       // Añadir coche nuevo
+                case 0 -> {                    // Salir del programa
                     System.out.println("Saliendo... ¡hasta luego!");
                     running = false;
                 }
@@ -43,6 +40,7 @@ public class Main {
         sc.close();
     }
 
+    // Muestra el menú principal
     private static void printMenu() {
         System.out.println("\n--- Menú ---");
         System.out.println("1. Listar coches disponibles");
@@ -53,24 +51,28 @@ public class Main {
         System.out.println("0. Salir");
     }
 
-    /* ---------- Operaciones del sistema ---------- */
+    /* ---------- Operaciones principales ---------- */
 
+    // Lista todos los coches de la flota
     private static void listarCoches() {
         System.out.println("\nListado de coches (ID - Marca Modelo - Precio - Estado):");
         if (flota.isEmpty()) {
             System.out.println("No hay coches en la flota.");
             return;
         }
+        // Recorre la lista y muestra cada coche
         for (Coche c : flota) {
             System.out.printf("%s - %s %s - %.2f€ - %s%n",
-                    c.getId(), c.getMarca(), c.getModelo(), c.getPrecio(), c.isDisponible() ? "DISPONIBLE" : "VENDIDO");
+                    c.getId(), c.getMarca(), c.getModelo(), c.getPrecio(),
+                    c.isDisponible() ? "DISPONIBLE" : "VENDIDO");
         }
     }
 
+    // Muestra los detalles de un coche específico
     private static void verDetalleCoche() {
         String id = readString("Introduce el ID del coche: ");
         Optional<Coche> opt = findCocheById(id);
-        if (opt.isPresent()) {
+        if (opt.isEmpty()) { // Si no se encuentra el coche
             System.out.println("Coche no encontrado.");
             return;
         }
@@ -79,10 +81,11 @@ public class Main {
         System.out.println(c);
     }
 
+    // Permite realizar la compra de un coche
     private static void realizarCompra() {
         String id = readString("Introduce el ID del coche a comprar: ");
         Optional<Coche> opt = findCocheById(id);
-        if (opt.isPresent()) {
+        if (opt.isEmpty()) {
             System.out.println("Coche no encontrado.");
             return;
         }
@@ -92,6 +95,7 @@ public class Main {
             return;
         }
 
+        // Se solicitan datos del cliente
         System.out.println("Has seleccionado: " + coche.getMarca() + " " + coche.getModelo() + " - " + coche.getPrecio() + "€");
         System.out.println("Introduce datos del cliente:");
         String nombre = readString("Nombre: ");
@@ -100,6 +104,7 @@ public class Main {
 
         Cliente cliente = new Cliente(UUID.randomUUID().toString(), nombre, dni, telefono);
 
+        // Elección del método de pago
         System.out.println("Selecciona método de pago:");
         System.out.println("1. Tarjeta");
         System.out.println("2. Efectivo");
@@ -115,25 +120,28 @@ public class Main {
         double importe = coche.getPrecio();
         System.out.printf("Importe a pagar: %.2f€%n", importe);
 
+        // Procesar el pago (simulado)
         boolean exito = pago.procesarPago(importe);
         if (!exito) {
             System.out.println("Pago rechazado. Compra cancelada.");
             return;
         }
 
-        // Registrar venta
+        // Registrar la venta
         Venta venta = new Venta(UUID.randomUUID().toString(), coche, cliente, LocalDate.now(), importe, pago);
         ventas.add(venta);
-        coche.setDisponible(false);
+        coche.setDisponible(false); // Marca el coche como vendido
         System.out.println("Compra completada. Venta registrada con ID: " + venta.getId());
     }
 
+    // Muestra todas las ventas realizadas
     private static void listarVentas() {
         System.out.println("\nVentas realizadas:");
         if (ventas.isEmpty()) {
             System.out.println("No se ha realizado ninguna venta aún.");
             return;
         }
+        // Muestra los detalles de cada venta
         for (Venta v : ventas) {
             System.out.printf("%s - %s %s vendido a %s el %s por %.2f€ (Método: %s)%n",
                     v.getId(),
@@ -146,6 +154,7 @@ public class Main {
         }
     }
 
+    // Añade un coche nuevo a la flota (demo)
     private static void anadirCoche() {
         System.out.println("\nAñadir coche (demo):");
         String marca = readString("Marca: ");
@@ -157,12 +166,14 @@ public class Main {
         System.out.println("Coche añadido con ID: " + c.getId());
     }
 
-    /* ---------- Utilidades ---------- */
+    /* ---------- Métodos de ayuda ---------- */
 
+    // Busca un coche por su ID
     private static Optional<Coche> findCocheById(String id) {
         return flota.stream().filter(c -> c.getId().equals(id)).findFirst();
     }
 
+    // Lee un número entero del usuario
     private static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -175,6 +186,7 @@ public class Main {
         }
     }
 
+    // Lee un número decimal (double)
     private static double readDouble(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -187,11 +199,13 @@ public class Main {
         }
     }
 
+    // Lee texto del usuario
     private static String readString(String prompt) {
         System.out.print(prompt);
         return sc.nextLine().trim();
     }
 
+    // Carga coches de ejemplo al iniciar el sistema
     private static void seedData() {
         flota.add(new Coche("C-001", "Toyota", "Corolla", "1234-ABC", 15000.0, true));
         flota.add(new Coche("C-002", "Seat", "Ibiza", "2345-BCD", 9000.0, true));
@@ -199,8 +213,9 @@ public class Main {
         flota.add(new Coche("C-004", "Renault", "Clio", "4567-DEF", 8000.0, true));
     }
 
-    /* ---------- Clases del dominio (autocontenido) ---------- */
+    /* ---------- Clases internas ---------- */
 
+    // Representa un coche dentro del sistema
     static class Coche {
         private final String id;
         private final String marca;
@@ -218,6 +233,7 @@ public class Main {
             this.disponible = disponible;
         }
 
+        // Getters y setter
         public String getId() { return id; }
         public String getMarca() { return marca; }
         public String getModelo() { return modelo; }
@@ -233,6 +249,7 @@ public class Main {
         }
     }
 
+    // Representa un cliente
     static class Cliente {
         private final String id;
         private final String nombre;
@@ -246,12 +263,14 @@ public class Main {
             this.telefono = telefono;
         }
 
+        // Getters
         public String getId() { return id; }
         public String getNombre() { return nombre; }
         public String getDni() { return dni; }
         public String getTelefono() { return telefono; }
     }
 
+    // Representa una venta realizada
     static class Venta {
         private final String id;
         private final Coche coche;
@@ -269,6 +288,7 @@ public class Main {
             this.pago = pago;
         }
 
+        // Getters
         public String getId() { return id; }
         public Coche getCoche() { return coche; }
         public Cliente getCliente() { return cliente; }
@@ -277,10 +297,12 @@ public class Main {
         public Pago getPago() { return pago; }
     }
 
+    // Interfaz que define un método común de pago
     interface Pago {
         boolean procesarPago(double importe);
     }
 
+    // Implementación de pago con tarjeta
     static class PagoTarjeta implements Pago {
         private final String numeroTarjeta;
 
@@ -290,6 +312,7 @@ public class Main {
 
         @Override
         public boolean procesarPago(double importe) {
+            // Simula validación del número de tarjeta
             if (numeroTarjeta == null || numeroTarjeta.length() < 8) {
                 System.out.println("Número de tarjeta inválido.");
                 return false;
@@ -300,6 +323,7 @@ public class Main {
         }
     }
 
+    // Implementación de pago en efectivo
     static class PagoEfectivo implements Pago {
         @Override
         public boolean procesarPago(double importe) {
