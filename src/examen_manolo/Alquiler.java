@@ -2,6 +2,9 @@
  * Clase que representa un alquiler de vehículo.
  */
 package examen_manolo;
+/**
+* Prueba
+*/
 
 /**
  * @author marcos 27 oct 2025
