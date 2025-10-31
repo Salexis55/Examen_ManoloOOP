@@ -1,17 +1,24 @@
 package examen_manolo;
 
+// La clase Camion hereda de Vehiculos
 public class Camion extends Vehiculos {
-	    private double capacidadToneladas;
+    
+    // Capacidad del camión en toneladas
+    private double capacidadToneladas;
 
-	    public Camion(String matricula, String marca, String modelo, double precioPorDia, double capacidadToneladas) {
-	        super(matricula, marca, modelo, precioPorDia);
-	        this.capacidadToneladas = capacidadToneladas;
-	    }
+    // Constructor que inicializa los datos del camión
+    public Camion(String matricula, String marca, String modelo, double precioPorDia, double capacidadToneladas) {
+        // Llama al constructor de la clase padre (Vehiculos)
+        super(matricula, marca, modelo, precioPorDia);
+        this.capacidadToneladas = capacidadToneladas;
+    }
 
-	    @Override
-	    public double calcularPrecio(int dias) {
-	        double extra = 1 + (capacidadToneladas * 0.05); // Aumenta 5% por tonelada
-	        return super.calcularPrecio(dias) * extra;
-	    }
-	}
-
+    // Sobrescribe el método calcularPrecio de la clase padre
+    @Override
+    public double calcularPrecio(int dias) {
+        // Aumenta el precio total un 5% por cada tonelada de capacidad
+        double extra = 1 + (capacidadToneladas * 0.05);
+        // Devuelve el precio base (de la clase padre) multiplicado por el extra
+        return super.calcularPrecio(dias) * extra;
+    }
+}
